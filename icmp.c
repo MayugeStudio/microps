@@ -1,10 +1,13 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "util.h"
 #include "ip.h"
 #include "icmp.h"
+
+#define ICMP_BUFSIZ IP_PAYLOAD_SIZE_MAX
 
 #define icmp_type com.type
 #define icmp_code com.code
@@ -115,6 +118,11 @@ icmp_input(const struct ip_hdr *iphdr, const uint8_t *data, size_t len, struct i
             ip_addr_ntop(iphdr->src, addr2, sizeof(addr2)), len);
     debugdump(data, len);
     icmp_print(data, len);
+}
+
+int
+icmp_output(uint8_t type, uint8_t code, uint32_t val, const uint8_t *data, size_t len, ip_addr_t src, ip_addr_t dst)
+{
 }
 
 int
