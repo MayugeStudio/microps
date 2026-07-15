@@ -131,7 +131,8 @@ net_protocol_register(uint16_t type, net_protocol_handler_t handler)
     }
     proto->type = type;
     proto->handler = handler;
-    proto->next = proto;
+    proto->next = protocols;
+    protocols = proto;
     infof("success, type=0x%04x");
     return 0;
 }
@@ -146,6 +147,7 @@ net_input(uint16_t type, const uint8_t *data, size_t len, struct net_device *dev
     for (proto = protocols; proto; proto = proto->next) {
         if (proto->type == type) {
             proto->handler(data, len, dev);
+            return 0;
         }
     }
     /* Unsupported protocol */
