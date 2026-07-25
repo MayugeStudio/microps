@@ -172,7 +172,7 @@ net_protocol_register(uint16_t type, net_protocol_handler_t handler)
     proto->handler = handler;
     proto->next = protocols;
     protocols = proto;
-    infof("success, type=0x%04x");
+    infof("success, type=0x%04x", proto->type);
     return 0;
 }
 
