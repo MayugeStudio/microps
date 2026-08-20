@@ -46,7 +46,6 @@ setup(void)
         errorf("loopback_init() failure");
         return -1;
     }
-
     iface = ip_iface_alloc(LOOPBACK_IP_ADDR, LOOPBACK_NETMASK);
     if (!iface) {
         errorf("ip_iface_alloc() failure");
@@ -56,6 +55,7 @@ setup(void)
         errorf("ip_ipface_register() failure");
         return -1;
     }
+
     dev = ether_tap_init(ETHER_TAP_NAME, ETHER_TAP_HW_ADDR);
     if (!dev) {
         errorf("ether_tap_init() failure");
@@ -68,6 +68,10 @@ setup(void)
     }
     if (ip_iface_register(dev, iface) == -1) {
         errorf("ip_iface_register() failure");
+        return -1;
+    }
+    if (ip_route_set_default_gateway(iface, DEFAULT_GATEWAY) == -1) {
+        errorf("ip_route_set_default_gateway() failure");
         return -1;
     }
 
@@ -97,8 +101,10 @@ app_main(void)
     uint32_t val;
     uint8_t data[] = {'T', 'E', 'S', 'T'};
 
-    ip_addr_pton("192.0.2.2", &src);
-    ip_addr_pton("192.0.2.1", &dst);
+    // ip_addr_pton("192.0.2.2", &src);
+    // ip_addr_pton("192.0.2.1", &dst);
+    src = IP_ADDR_ANY;
+    ip_addr_pton("8.8.8.8", &dst);
     id = getpid() % UINT16_MAX;
     debugf("press Ctrl+C to terminate");
     while (!terminate) {
@@ -107,7 +113,7 @@ app_main(void)
             errorf("icmp_output() failure");
             break;
         }
-        sleep(8);
+        sleep(1);
     }
     debugf("terminate");
     return 0;
